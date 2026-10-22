@@ -1,0 +1,22 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.venv-1/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local development
+.DS_Store
+.rocketride/
+# Keep private files out of GitHub
+.env
+.env.*
+DATA/
+MODEL/
