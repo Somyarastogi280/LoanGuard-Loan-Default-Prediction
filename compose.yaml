@@ -1,0 +1,44 @@
+
+services:
+  db:
+    image: postgres:16
+    container_name: loanguard-db
+    environment:
+      POSTGRES_DB: loan_default_db
+      POSTGRES_USER: loan_user
+      POSTGRES_PASSWORD: loan_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - loan_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U loan_user -d loan_default_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: loanguard-api
+    command: ["python", "-m", "uvicorn", "API.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      DATABASE_URL: postgresql://loan_user:loan_password@db:5432/loan_default_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  streamlit:
+    build: .
+    container_name: loanguard-streamlit
+    command: ["python", "-m", "streamlit", "run", "STREAMLIT/app.py", "--server.address=0.0.0.0", "--server.port=8501"]
+    environment:
+      API_URL: http://api:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+
+volumes:
+  loan_postgres_data:

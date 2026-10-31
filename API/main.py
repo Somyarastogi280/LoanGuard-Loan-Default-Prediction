@@ -22,6 +22,8 @@ MODEL_PATH = BASE_DIR.parent / "MODEL" / "final_model.pkl"
 model = joblib.load(MODEL_PATH)
 # Get feature names used during model training
 FEATURE_NAMES = list(model.feature_names_in_)
+print("MODEL FEATURES:", FEATURE_NAMES)
+print("MODEL FEATURE COUNT:", len(FEATURE_NAMES))
 # ---------------------------------
 # PostgreSQL Connection
 # ---------------------------------
@@ -58,10 +60,9 @@ def predict(loan_data: Dict[str, Any]):
         # Create model input
         # ---------------------------------
         input_data = pd.DataFrame(
-            np.nan,
-            index=[0],
-            columns=FEATURE_NAMES
-        )
+          {feature: [np.nan] for feature in FEATURE_NAMES},
+             dtype=object
+           )
         # Fill the features provided by the user
         for feature, value in loan_data.items():
             if feature in input_data.columns:

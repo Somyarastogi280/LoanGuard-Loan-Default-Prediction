@@ -1,8 +1,9 @@
 import streamlit as st
+import os
 import requests
-import psycopg2
 import pandas as pd
-API_URL = "http://127.0.0.1:8000"
+import psycopg2
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 # ============================================================
 # LoanGuard — Intelligent Loan Default Risk Assessment
 # Frontend only: Streamlit UI + existing FastAPI /predict API
@@ -1006,7 +1007,7 @@ def render_explainability():
 def get_db_connection():
     """Connect Streamlit to PostgreSQL."""
     return psycopg2.connect(
-        host="localhost",
+        host="db",
         port=5432,
         database="loan_default_db",
         user="loan_user",
